@@ -1,0 +1,36 @@
+
+name: Dairy Nitrogen Literature Agent
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  collect-literature:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get repository files
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run literature agent
+        run: python agent.py
+
+      - name: Save research results
+        uses: actions/upload-artifact@v4
+        with:
+          name: dairy-nitrogen-literature
+          path: output/
+          if-no-files-found: error
